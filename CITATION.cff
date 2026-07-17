@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it using the metadata below."
+title: "Minerals in the Wild: A Paired Hyperspectral-XRF Dataset for Elemental Composition Estimation"
+type: dataset
+authors:
+  - family-names: "Tetoula-Tsonga"
+    given-names: "Eleftheria"
+  - family-names: "Arvanitakis"
+    given-names: "George"
+  - family-names: "Giannakas"
+    given-names: "Theodoros"
+version: 1.0.0
+license: CC-BY-4.0
+abstract: >-
+  Paired calibrated SWIR hyperspectral image cubes and harmonised XRF
+  elemental compositions for 1,132 natural rock specimens collected across
+  Europe.
+keywords:
+  - hyperspectral imaging
+  - X-ray fluorescence
+  - mineral exploration
+  - spectral unmixing
+  - elemental composition
+  - benchmark dataset
