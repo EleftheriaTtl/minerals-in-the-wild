@@ -15,7 +15,7 @@ XRF table.
 | Specimens | 1,132 |
 | HSI sensor | Specim SWIR push-broom camera |
 | Spectral bands | 273 |
-| Spectral range | Approximately 1000-2500 nm |
+| Spectral range | 996.34-2504.28 nm |
 | Cube format | NumPy `.npy`, `float32`, shape `(height, width, 273)` |
 | Released spatial dimensions | Heights 6-100 pixels; widths 9-347 pixels |
 | XRF instrument | Bruker S1 TITAN handheld XRF analyser |
@@ -79,11 +79,16 @@ an 8 mm XRF analysis spot. The five measurements were averaged to obtain one
 specimen-level composition.
 
 The original XRF output contained a mixture of elemental and compound labels.
-Compound values were converted to elemental contributions using stoichiometric
-mass fractions. Oxygen, carbon and entries outside the instrument-calibrated
-panel were removed, after which the retained values were renormalised. The
-released table therefore contains **51 elemental mass-fraction columns**, not
-the original mixed element/oxide output.
+Compound values were decomposed into elemental contributions using
+stoichiometric mass fractions. This decomposition produces oxygen and carbon
+as arithmetic byproducts; they are not direct XRF measurements. The internal
+conversion also includes a `Missing` closure residual.
+
+For the public release, `O`, `C`, and `Missing` are removed. The remaining 51
+calibrated elements are rescaled proportionally so that each row sums to the
+original retained fraction (`1 - Missing`), matching the evaluation pipeline.
+Consequently, released row sums range from approximately **0.1707 to 1.0000**
+and should not be assumed to equal 1.
 
 ## Index
 
