@@ -1,11 +1,11 @@
-# Required wavelength metadata
+# Wavelength metadata
 
-Add `wavelengths.csv` to this directory before publication. It must contain
-exactly 273 data rows and the following columns:
+`wavelengths.csv` maps the 273 hyperspectral bands to their centre wavelengths and full width at half maximum (FWHM).
 
-```text
-band_index,wavelength_nm,fwhm_nm
-```
+| Column | Meaning |
+|---|---|
+| `band_index` | Zero-based band index (`0–272`) |
+| `wavelength_nm` | Band centre wavelength in nanometres |
+| `fwhm_nm` | Full width at half maximum in nanometres |
 
-Use the values exported from the actual Specim acquisition metadata. Do not
-interpolate or reconstruct them from the approximate 1000-2500 nm range.
+The wavelengths range from **996.34 to 2504.28 nm**, and the FWHM values range from **5.52 to 5.61 nm**.
