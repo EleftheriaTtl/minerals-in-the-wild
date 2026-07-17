@@ -28,8 +28,8 @@ python3 - "$MASKED" "$XRF" "$OUT" <<'PY'
 import csv
 import glob
 import hashlib
+import math
 import os
-import shutil
 import sys
 import zipfile
 
@@ -55,7 +55,72 @@ actual_names = [os.path.basename(path) for path in files]
 if actual_names != expected_names:
     raise SystemExit("Cube identifiers are missing, duplicated, or non-contiguous")
 
-shutil.copyfile(xrf_source, os.path.join(out, "xrf_elements.csv"))
+# Filter the internal conversion output to the exact 51-element target used by
+# the unmixing evaluation. O and C are stoichiometric byproducts, while Missing
+# is a closure residual rather than an element. The retained elements are
+# rescaled to preserve the original measured fraction (1 - Missing), matching
+# filter_and_renormalize and making this operation idempotent downstream.
+kept_elements = (
+    "Ag", "Al", "As", "Au", "Ba", "Bi", "Br", "Ca", "Cd", "Ce", "Cl",
+    "Co", "Cr", "Cu", "Fe", "Ga", "Hf", "Hg", "In", "K", "La", "Mg",
+    "Mn", "Mo", "Nb", "Ni", "P", "Pb", "Pd", "Pt", "Rb", "Re", "Rh",
+    "Ru", "S", "Sb", "Se", "Si", "Sn", "Sr", "Ta", "Te", "Th", "Ti",
+    "Tl", "U", "V", "W", "Y", "Zn", "Zr",
+)
+if len(kept_elements) != 51 or len(set(kept_elements)) != 51:
+    raise SystemExit("Internal error: the release schema must contain 51 unique elements")
+
+with open(xrf_source, newline="", encoding="utf-8-sig") as stream:
+    reader = csv.DictReader(stream)
+    source_header = reader.fieldnames or []
+    required = {"Name", "O", "C", "Missing", *kept_elements}
+    missing_columns = sorted(required - set(source_header))
+    unexpected_columns = sorted(set(source_header) - required)
+    if missing_columns:
+        raise SystemExit(f"XRF input is missing required columns: {missing_columns}")
+    if unexpected_columns:
+        raise SystemExit(f"XRF input contains unexpected columns: {unexpected_columns}")
+    source_rows = list(reader)
+
+if len(source_rows) != len(files):
+    raise SystemExit(
+        f"XRF/cube count mismatch: {len(source_rows)} XRF rows vs {len(files)} cubes"
+    )
+
+expected_ids = {os.path.splitext(os.path.basename(path))[0] for path in files}
+actual_ids = [row["Name"] for row in source_rows]
+if len(set(actual_ids)) != len(actual_ids):
+    raise SystemExit("XRF sample identifiers are duplicated")
+if set(actual_ids) != expected_ids:
+    raise SystemExit("XRF sample identifiers do not match the HSI cube identifiers")
+
+xrf_output = os.path.join(out, "xrf_elements.csv")
+with open(xrf_output, "w", newline="", encoding="utf-8") as stream:
+    writer = csv.writer(stream)
+    writer.writerow(("Name", *kept_elements))
+    for row in source_rows:
+        values = {
+            name: float(row[name])
+            for name in (*kept_elements, "O", "C", "Missing")
+        }
+        if any(not math.isfinite(value) for value in values.values()):
+            raise SystemExit(f"Invalid XRF value in {row['Name']}")
+        if values["Missing"] < -1e-12 or any(values[name] < 0 for name in (*kept_elements, "O", "C")):
+            raise SystemExit(f"Negative XRF value in {row['Name']}")
+        values["Missing"] = max(0.0, values["Missing"])
+        original_element_total = sum(values[name] for name in kept_elements) + values["O"] + values["C"]
+        retained_total = sum(values[name] for name in kept_elements)
+        if retained_total <= 0:
+            raise SystemExit(f"No retained elemental mass in {row['Name']}")
+        if not math.isclose(original_element_total + values["Missing"], 1.0, abs_tol=1e-9):
+            raise SystemExit(f"XRF row does not close to 1.0: {row['Name']}")
+        scale = original_element_total / retained_total
+        transformed = [values[name] * scale for name in kept_elements]
+        if not math.isclose(sum(transformed), original_element_total, abs_tol=1e-12):
+            raise SystemExit(f"XRF renormalisation failed for {row['Name']}")
+        writer.writerow((row["Name"], *transformed))
+
+print(f"Built XRF table: {len(source_rows)} rows x {len(kept_elements)} elements")
 
 part = 1
 accumulated = 0
