@@ -1,0 +1,11 @@
+release_assets/
+hsi_cubes/
+*.npy
+*.zip
+xrf_elements.csv
+
+__pycache__/
+*.py[cod]
+.DS_Store
+
+  
