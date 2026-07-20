@@ -1,5 +1,7 @@
 # Minerals in the Wild
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21414930.svg)](https://doi.org/10.5281/zenodo.21414930)
+
 **A paired hyperspectral-XRF dataset for elemental composition estimation**
 
 Minerals in the Wild contains calibrated short-wave infrared (SWIR)
@@ -170,8 +172,9 @@ print(elemental_composition)
 
 ## Citation
 
-Use the citation shown in [`CITATION.cff`](./CITATION.cff). After the dataset
-receives a Zenodo DOI, the DOI will be added to the citation metadata.
+Please cite version 1.0.0 of the dataset using the DOI:
+[10.5281/zenodo.21414930](https://doi.org/10.5281/zenodo.21414930).
+Citation metadata is also available in [`CITATION.cff`](./CITATION.cff).
 
 Associated manuscript:
 
@@ -188,4 +191,5 @@ is given, the licence is linked, and changes are indicated.
 
 ## Contact
 
-For questions or corrections, open an issue in this repository.
+For questions or corrections, open an issue in this repository or contact
+[Eleftheria Tetoula-Tsonga](mailto:tetoula.tsonga@hotmail.com).
