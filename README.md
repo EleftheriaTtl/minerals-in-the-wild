@@ -112,7 +112,9 @@ Download all assets from the [latest release](../../releases/latest). With the
 GitHub CLI:
 
 ```bash
-gh release download --pattern '*'
+git clone https://github.com/EleftheriaTtl/minerals-in-the-wild.git
+cd minerals-in-the-wild
+gh release download v1.0.0 --pattern '*'
 ```
 
 Verify the downloads before extracting:
