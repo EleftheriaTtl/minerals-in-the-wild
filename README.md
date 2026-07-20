@@ -108,12 +108,29 @@ and should not be assumed to equal 1.
 
 ## Download
 
-Download all assets from the [latest release](../../releases/latest). With the
-GitHub CLI:
+First, clone the repository to obtain the documentation and lightweight
+metadata:
 
 ```bash
 git clone https://github.com/EleftheriaTtl/minerals-in-the-wild.git
 cd minerals-in-the-wild
+```
+
+Then obtain the dataset assets using either of the following methods.
+
+### Option 1: Zenodo
+
+Download all seven files from the
+[Zenodo record](https://doi.org/10.5281/zenodo.21414930) and place them in the
+root of the cloned repository.
+
+### Option 2: GitHub CLI
+
+Install the [GitHub CLI](https://cli.github.com/), authenticate it, and download
+the release assets:
+
+```bash
+gh auth login
 gh release download v1.0.0 --pattern '*'
 ```
 
