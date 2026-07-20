@@ -5,11 +5,15 @@ type: dataset
 authors:
   - family-names: "Tetoula-Tsonga"
     given-names: "Eleftheria"
+    email: "tetoula.tsonga@hotmail.com"
   - family-names: "Arvanitakis"
     given-names: "George"
   - family-names: "Giannakas"
     given-names: "Theodoros"
 version: 1.0.0
+doi: "10.5281/zenodo.21414930"
+date-released: "2026-07-20"
+url: "https://doi.org/10.5281/zenodo.21414930"
 license: CC-BY-4.0
 abstract: >-
   Paired calibrated SWIR hyperspectral image cubes and harmonised XRF
